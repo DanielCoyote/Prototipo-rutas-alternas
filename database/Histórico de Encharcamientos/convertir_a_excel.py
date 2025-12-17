@@ -1,53 +1,53 @@
-from dbfread import DBF
+import geopandas as gpd
 import pandas as pd
 
-DBF_PATH = "encharcamientos_2000_2017_e.dbf"
-DICT_PATH = "diccionario_datos_encharcamiento_2000_2017_e.csv"
-OUTPUT_EXCEL = "encharcamientos_2000_2017.xlsx"
+SHAPEFILE_PATH = "encharcamientos_2000_2017_e.shp"
+OUTPUT_EXCEL = "encharcamientos_2000_2017_filtrado.xlsx"
 
 # --------------------------------------------
-# 1. LEER EL DBF SIN PARSEAR FECHAS
+# 1. LEER EL SHAPEFILE COMPLETO
 # --------------------------------------------
-print("📥 Leyendo DBF sin convertir fechas...")
-table = DBF(DBF_PATH, load=True, char_decode_errors='ignore')
+print("📥 Leyendo Shapefile con geometrías...")
+# Leer shapefile con encoding para acentos y ñ
+gdf = gpd.read_file(SHAPEFILE_PATH, encoding='latin-1')
 
-# Convertir a DataFrame
-df = pd.DataFrame(iter(table))
+# Convertir a DataFrame regular (sin geometría para Excel)
+df = pd.DataFrame(gdf.drop(columns='geometry'))
 
-print("✔️ Columnas cargadas desde el DBF:")
+print("✔️ Columnas cargadas desde el Shapefile:")
 print(df.columns.tolist())
+print(f"📊 Total de registros iniciales: {len(df)}")
 
 # --------------------------------------------
-# 2. LEER DICCIONARIO DE DATOS
+# 2. FILTRAR POR DELEGACIÓN IZTAPALAPA
 # --------------------------------------------
-print("\n📥 Leyendo diccionario...")
-diccionario = pd.read_csv(DICT_PATH)
-
-cols_dict = diccionario.columns.tolist()
-print("✔️ Columnas encontradas en diccionario:", cols_dict)
-
-# Posibles nombres de columnas
-posibles_nombres_campo = ["campo", "nombre", "columna", "atributo", "nombre_campo"]
-posibles_nombres_desc = ["descripcion", "descripción", "nombre_limpio", "nombre_amigable"]
-
-col_campo = next((c for c in posibles_nombres_campo if c in cols_dict), None)
-col_desc = next((c for c in posibles_nombres_desc if c in cols_dict), None)
-
-if col_campo and col_desc:
-    rename_map = {
-        row[col_campo]: row[col_desc]
-        for _, row in diccionario.iterrows()
-        if row[col_campo] in df.columns
-    }
-    print("\n🔄 Renombrando columnas con el diccionario:")
-    print(rename_map)
-
-    df = df.rename(columns=rename_map)
-else:
-    print("⚠️ No se encontraron columnas válidas para renombrar.")
+print("\n🔍 Filtrando por delegación IZTAPALAPA...")
+df = df[df['DELEGACION'].str.upper().str.strip() == 'IZTAPALAPA']
+print(f"✔️ Registros después del filtro de delegación: {len(df)}")
 
 # --------------------------------------------
-# 3. GUARDAR EXCEL FINAL
+# 3. FILTRAR POR CAUSAS SELECCIONADAS
+# --------------------------------------------
+causas_validas = [
+    'FALTA DE DRENAJE',
+    'FALTA DE INFRAESTRUCTURA',
+    'HUNDIMIENTO DE LA CARPETA ASFALTICA',
+    'HUNDIMIENTO DE LA CARPETA ASFÁLTICA',
+    'HUNDIMIENTO DE PISO',
+    'INSUFICIENCIA DE ATARJEA Y COLECTOR',
+    'INSUFICIENCIA DE GRIETA',
+    'INSUFICIENCA DE ATARJEA Y COLECTOR', 
+]
+
+print("\n🔍 Filtrando por causas válidas...")
+df = df[df['CAUSA'].str.upper().str.strip().isin([c.upper() for c in causas_validas])]
+print(f"✔️ Registros después del filtro de causas: {len(df)}")
+
+print("\n📋 Distribución de causas en los datos filtrados:")
+print(df['CAUSA'].value_counts())
+
+# --------------------------------------------
+# 4. GUARDAR EXCEL FINAL
 # --------------------------------------------
 df.to_excel(OUTPUT_EXCEL, index=False)
 print(f"\n🎉 Excel generado correctamente: {OUTPUT_EXCEL}")
