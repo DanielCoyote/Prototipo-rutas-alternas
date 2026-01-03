@@ -27,14 +27,14 @@ function FitBounds({ route, origin, destination }) {
   return null;
 }
 
-// Component to handle map clicks
+// Component to handle map double clicks
 function MapClickHandler({ onClick }) {
   const map = useMap();
 
   useEffect(() => {
-    map.on('click', onClick);
+    map.on('dblclick', onClick);
     return () => {
-      map.off('click', onClick);
+      map.off('dblclick', onClick);
     };
   }, [map, onClick]);
 
@@ -113,15 +113,6 @@ export default function MapView({ origin, destination, route, onDestinationChang
 
         <FitBounds route={route} origin={origin} destination={destination} />
       </MapContainer>
-
-      {/* Floating Add Favorite Button */}
-      <button 
-        className="add-favorite-button"
-        onClick={handleMapClick}
-        title="Agregar lugar favorito"
-      >
-        +
-      </button>
 
       {/* Dialog for adding favorite */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
