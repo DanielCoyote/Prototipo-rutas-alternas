@@ -2,12 +2,17 @@ import "./SearchBar.css";
 import { useState, useEffect, useRef } from "react";
 import { autocomplete } from "../../services/ors";
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones = () => {} }) {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
 
+  // We store coords as returned by ORS: [lon, lat]
+  const [originCoords, setOriginCoords] = useState(null);
+  const [destinationCoords, setDestinationCoords] = useState(null);
+
   const [originSuggestions, setOriginSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
+  const [autocompleteError, setAutocompleteError] = useState(null);
 
   const [activeField, setActiveField] = useState(null);
 
@@ -34,8 +39,8 @@ export default function SearchBar({ onSearch }) {
     debounceTimerRef.current = setTimeout(async () => {
       try {
         const results = await autocomplete(value);
-        console.log(`${field} results:`, results);
-        
+        // console.log(`${field} results:`, results);
+        setAutocompleteError(null);
         if (field === "origin") {
           setOriginSuggestions(results);
         } else {
@@ -43,6 +48,13 @@ export default function SearchBar({ onSearch }) {
         }
       } catch (error) {
         console.error(`Error fetching ${field} suggestions:`, error);
+        // clear after 3s
+        setTimeout(() => setAutocompleteError(null), 3000);
+        if (field === "origin") {
+          setOriginSuggestions([]);
+        } else {
+          setDestinationSuggestions([]);
+        }
       }
     }, 500); // 500ms de delay - ajusta según prefieras
   };
@@ -59,20 +71,42 @@ export default function SearchBar({ onSearch }) {
   const selectSuggestion = (item, field) => {
     if (field === "origin") {
       setOrigin(item.label);
+      setOriginCoords(item.coords); // [lon, lat]
       setOriginSuggestions([]);
       setActiveField(null);
     } else {
       setDestination(item.label);
+      setDestinationCoords(item.coords); // [lon, lat]
       setDestinationSuggestions([]);
       setActiveField(null);
     }
   };
 
+  const handleSearchClick = () => {
+    if (!originCoords || !destinationCoords) return;
+    onSearch({ label: origin, coords: originCoords }, { label: destination, coords: destinationCoords });
+  };
+
+  const onKeyDownDestination = (e) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
+
   return (
     <div className="search-container">
-      <div className="search-header">
+      <div className="search-header" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
         <button className="menu-btn">☰</button>
-        <h2>Direcciones de Viaje</h2>
+        <h2 style={{ margin: 0 }}>Direcciones de Viaje</h2>
+
+        <label style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', background: 'white', padding: '4px 8px', borderRadius: 6 }}>
+          <input
+            type="checkbox"
+            checked={avoidZones}
+            onChange={(e) => setAvoidZones(e.target.checked)}
+          />
+          <span style={{ marginLeft: 8, fontSize: 12 }}>Evitar zonas inundables</span>
+        </label>
       </div>
 
       <div className="search-box">
@@ -86,6 +120,7 @@ export default function SearchBar({ onSearch }) {
               value={origin}
               onChange={(e) => {
                 setOrigin(e.target.value);
+                setOriginCoords(null);
                 handleAutocomplete(e.target.value, "origin");
                 setActiveField("origin");
               }}
@@ -113,9 +148,11 @@ export default function SearchBar({ onSearch }) {
               value={destination}
               onChange={(e) => {
                 setDestination(e.target.value);
+                setDestinationCoords(null);
                 handleAutocomplete(e.target.value, "destination");
                 setActiveField("destination");
               }}
+              onKeyDown={onKeyDownDestination}
             />
           </div>
 
@@ -128,6 +165,14 @@ export default function SearchBar({ onSearch }) {
               ))}
             </ul>
           )}
+
+          {autocompleteError && <div style={{ color: 'red', marginTop: 6 }}>{autocompleteError}</div>}
+        </div>
+
+        <div style={{ marginTop: 10 }}>
+          <button className="search-button" onClick={handleSearchClick} disabled={!originCoords || !destinationCoords}>
+            Buscar ruta
+          </button>
         </div>
       </div>
     </div>

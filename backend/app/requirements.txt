@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+httpx
+python-dotenv
+pyproj
+shapely
+
+# Optional: Local routing fallback dependencies (install on-demand; on Windows prefer conda)
+osmnx>=1.3
+networkx
