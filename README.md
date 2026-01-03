@@ -18,17 +18,17 @@ He añadido un backend minimalista que actúa como proxy para OpenRouteService y
    .\venv\Scripts\Activate.ps1
    pip install -r app/requirements.txt
 
-   # Ejecuta uvicorn desde la raíz del paquete para evitar errores de import relativos:
+   ### Ejecuta uvicorn desde la raíz del paquete para evitar errores de import relativos:
    uvicorn app.main:app --reload --port 8000
 
-   # Alternativamente, si estás dentro de `backend/app`, puedes usar:
+   ### Alternativamente, si estás dentro de `backend/app`, puedes usar:
    uvicorn main:app --reload --port 8000
    # (si usas este comando se aplica el fallback de import en `main.py`, pero preferimos la forma del paquete)
 
-   # DEBUG & fallback local
-   # - Para ayudar a depurar, puedes pedir metadata de diagnóstico añadiendo `?debug=true` al endpoint `/api/route`.
-   #   En ese caso la respuesta incluirá `"source": "ors"` o `"source": "local"` indicando qué motor proporcionó la ruta.
-   # - Si ORS falla y quieres forzar probar el fallback local, asegúrate de tener instalado `osmnx` y `networkx` (recomendado con conda en Windows).
+   ## DEBUG & fallback local
+    - Para ayudar a depurar, puedes pedir metadata de diagnóstico añadiendo `?debug=true` al endpoint `/api/route`.
+      En ese caso la respuesta incluirá `"source": "ors"` o `"source": "local"` indicando qué motor proporcionó la ruta.
+    - Si ORS falla y quieres forzar probar el fallback local, asegúrate de tener instalado `osmnx` y `networkx` (recomendado con conda en Windows).
 
 El backend expondrá:
 - POST `/api/autocomplete`  { text }
