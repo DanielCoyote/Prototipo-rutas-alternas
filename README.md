@@ -23,7 +23,8 @@ He añadido un backend minimalista que actúa como proxy para OpenRouteService y
 
    ### Alternativamente, si estás dentro de `backend/app`, puedes usar:
    uvicorn main:app --reload --port 8000
-   # (si usas este comando se aplica el fallback de import en `main.py`, pero preferimos la forma del paquete)
+
+   (si usas este comando se aplica el fallback de import en `main.py`, pero preferimos la forma del paquete)
 
    ## DEBUG & fallback local
     - Para ayudar a depurar, puedes pedir metadata de diagnóstico añadiendo `?debug=true` al endpoint `/api/route`.
