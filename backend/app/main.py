@@ -137,21 +137,11 @@ async def autocomplete(req: AutocompleteReq):
 
     return results
 
-# Import router in a way that works both when running as a package (uvicorn app.main:app)
-# and when running from inside the `app` folder (uvicorn main:app)
-try:
-    from .api.routes import router
-except Exception:
-    # Fallback to absolute import when module is executed as top-level
-    from api.routes import router
+# Import routers
+from .api.auth import router as auth_router
+from .api.routes import router as routes_router
+from .api.polygons import router as polygons_router
 
-app.include_router(router)
-
-
-# polygons endpoint moved to separate module for clarity
-try:
-    from .api.polygons import router as polygons_router
-except Exception:
-    from api.polygons import router as polygons_router
-
+app.include_router(auth_router)
+app.include_router(routes_router)
 app.include_router(polygons_router)
