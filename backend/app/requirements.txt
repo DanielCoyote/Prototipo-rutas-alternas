@@ -4,6 +4,9 @@ httpx
 python-dotenv
 pyproj
 shapely
+supabase
+python-jose[cryptography]
+passlib[bcrypt]
 
 # Optional: Local routing fallback dependencies (install on-demand; on Windows prefer conda)
 osmnx>=1.3
