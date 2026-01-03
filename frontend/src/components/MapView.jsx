@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from "@mui/material";
 import PolygonsLayer from "./PolygonsLayer";
 import FavoriteMarkers from "./FavoriteMarkers";
+import LocationButton from "./LocationButton";
 import { createFavorite } from "../services/api";
 
 function FitBounds({ route, origin, destination }) {
@@ -86,6 +87,7 @@ export default function MapView({ origin, destination, route, onDestinationChang
         zoomControl={false}
       >
         <ZoomControl position="bottomright" />
+        <LocationButton />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />

@@ -104,16 +104,16 @@ export default function Home() {
 
   // Handle destination change from favorite marker
   const handleDestinationChange = (coords, label) => {
-    // coords is [lat, lon]
+    // coords comes as [lat, lon] from FavoriteMarkers
     setDestinationMarker(coords);
     // Clear route when destination changes
     setRoute(null);
     
     // Update SearchBar with favorite info
-    // coords format: [lat, lon], need to convert to [lon, lat] for ORS
+    // coords format received: [lat, lon], need to convert to [lon, lat] for ORS
     setExternalDestination({
       label: label || `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}`,
-      coords: [coords[1], coords[0]] // Convert to [lon, lat]
+      coords: [coords[1], coords[0]] // Convert [lat, lon] -> [lon, lat]
     });
   };
 

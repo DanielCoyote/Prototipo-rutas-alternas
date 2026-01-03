@@ -22,6 +22,38 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
 
   const debounceTimerRef = useRef(null);
 
+  const handleUseCurrentLocation = (field) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          // Store in [lon, lat] format for consistency with ORS API
+          const coords = [longitude, latitude];
+          const label = `Mi ubicación (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+          
+          if (field === "origin") {
+            setOrigin(label);
+            setOriginCoords(coords);
+          } else {
+            setDestination(label);
+            setDestinationCoords(coords);
+          }
+        },
+        (error) => {
+          console.error("Error obteniendo ubicación:", error);
+          alert("No se pudo obtener tu ubicación. Verifica los permisos del navegador.");
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
+    } else {
+      alert("Tu navegador no soporta geolocalización");
+    }
+  };
+
   const handleAutocomplete = async (value, field) => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
@@ -253,7 +285,7 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
       <div className="search-box" style={{ padding: "16px" }}>
         {/* ORIGEN */}
         <div style={{ position: 'relative', marginBottom: "12px" }}>
-          <div className="input-group">
+          <div className="input-group" style={{ display: 'flex', gap: '8px' }}>
             <span className="icon start">●</span>
             <input
               type="text"
@@ -265,7 +297,25 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
                 handleAutocomplete(e.target.value, "origin");
                 setActiveField("origin");
               }}
+              style={{ flex: 1 }}
             />
+            <button
+              onClick={() => handleUseCurrentLocation("origin")}
+              style={{
+                background: "#4FD1C5",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 12px",
+                cursor: "pointer",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              title="Usar mi ubicación actual"
+            >
+              📍
+            </button>
           </div>
 
           {activeField === "origin" && originSuggestions.length > 0 && (
@@ -281,7 +331,7 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
 
         {/* DESTINO */}
         <div style={{ position: 'relative', marginBottom: "12px" }}>
-          <div className="input-group">
+          <div className="input-group" style={{ display: 'flex', gap: '8px' }}>
             <span className="icon end">📍</span>
             <input
               type="text"
@@ -294,7 +344,25 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
                 setActiveField("destination");
               }}
               onKeyDown={onKeyDownDestination}
+              style={{ flex: 1 }}
             />
+            <button
+              onClick={() => handleUseCurrentLocation("destination")}
+              style={{
+                background: "#4FD1C5",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 12px",
+                cursor: "pointer",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              title="Usar mi ubicación actual"
+            >
+              📍
+            </button>
           </div>
 
           {activeField === "destination" && destinationSuggestions.length > 0 && (
