@@ -141,7 +141,9 @@ async def autocomplete(req: AutocompleteReq):
 from .api.auth import router as auth_router
 from .api.routes import router as routes_router
 from .api.polygons import router as polygons_router
+from .api.favorites import router as favorites_router
 
 app.include_router(auth_router)
 app.include_router(routes_router)
 app.include_router(polygons_router)
+app.include_router(favorites_router)

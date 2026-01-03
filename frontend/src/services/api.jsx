@@ -74,3 +74,55 @@ export async function getCurrentUser() {
   
   return response.json();
 }
+
+/**
+ * Get all favorite places
+ */
+export async function getFavorites() {
+  const response = await fetch(`${API_BASE_URL}/favorites`, {
+    method: 'GET',
+    headers: getAuthHeaders()
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al obtener favoritos');
+  }
+  
+  return response.json();
+}
+
+/**
+ * Create a new favorite place
+ */
+export async function createFavorite(label, latitude, longitude) {
+  const response = await fetch(`${API_BASE_URL}/favorites`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ label, latitude, longitude })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al crear favorito');
+  }
+  
+  return response.json();
+}
+
+/**
+ * Delete a favorite place
+ */
+export async function deleteFavorite(favoriteId) {
+  const response = await fetch(`${API_BASE_URL}/favorites/${favoriteId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al eliminar favorito');
+  }
+  
+  return response.json();
+}

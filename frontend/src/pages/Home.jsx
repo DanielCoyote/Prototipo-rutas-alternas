@@ -76,10 +76,23 @@ export default function Home() {
     }
   };
 
+  // Handle destination change from favorite marker
+  const handleDestinationChange = (coords) => {
+    // coords is [lat, lon]
+    setDestinationMarker(coords);
+    // Clear route when destination changes
+    setRoute(null);
+  };
+
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
       <SearchBar onSearch={handleSearch} avoidZones={avoidZones} setAvoidZones={setAvoidZones} onLogout={handleLogout} />
-      <MapView origin={originMarker} destination={destinationMarker} route={route} />
+      <MapView 
+        origin={originMarker} 
+        destination={destinationMarker} 
+        route={route} 
+        onDestinationChange={handleDestinationChange}
+      />
     </div>
   );
 }
