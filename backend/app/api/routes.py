@@ -160,16 +160,30 @@ async def route(req: RouteReq, debug: bool = False, force_local: bool = False): 
         raise HTTPException(status_code=500, detail="ORS_API_KEY not configured on server")
 
     url = f"https://api.openrouteservice.org/v2/directions/{req.profile}/geojson?api_key={ORS_KEY}"
-    body = {"coordinates": [req.origin, req.destination]}
+    body = {
+        "coordinates": [req.origin, req.destination],
+        "alternative_routes": {
+            "target_count": 2,
+            "share_factor": 0.6,
+            "weight_factor": 1.4
+        }
+    }
 
     # If force_local is set, skip ORS entirely and try the local routing fallback directly
     if force_local:
         logger.info('force_local=True: skipping ORS and using local routing')
         try:
             coords_local = await run_in_threadpool(compute_local_route_sync, req.origin, req.destination, req.avoid_polygons)
+            result = {
+                "routes": [{
+                    "coords": coords_local,
+                    "duration": None,
+                    "distance": None
+                }]
+            }
             if debug:
-                return {"coords": coords_local, "source": "local"}
-            return {"coords": coords_local}
+                result["source"] = "local"
+            return result
         except Exception:
             logger.exception('Local fallback failed when forced')
             raise HTTPException(status_code=502, detail='Local fallback failed or unavailable')
@@ -218,9 +232,16 @@ async def route(req: RouteReq, debug: bool = False, force_local: bool = False): 
                         coords_penalty = await run_in_threadpool(compute_local_route_penalty, req.origin, req.destination, unioned)
                         if coords_penalty:
                             logger.info('Local penalty-based route found')
+                            result = {
+                                "routes": [{
+                                    "coords": coords_penalty,
+                                    "duration": None,
+                                    "distance": None
+                                }]
+                            }
                             if debug:
-                                return {"coords": coords_penalty, "source": "local-penalty"}
-                            return {"coords": coords_penalty}
+                                result["source"] = "local-penalty"
+                            return result
                     except Exception:
                         logger.exception('Penalty-based local routing failed; will try other fallbacks')
         except Exception:
@@ -238,24 +259,29 @@ async def route(req: RouteReq, debug: bool = False, force_local: bool = False): 
         features = data.get("features")
         if not features:
             raise HTTPException(status_code=404, detail="No route found")
-        feat = features[0]
-        coords = feat["geometry"]["coordinates"]
-        converted = [[lat, lon] for lon, lat in coords]
         
-        # Extract summary information
-        summary = feat.get("properties", {}).get("summary", {})
-        duration_seconds = summary.get("duration", 0)
-        distance_meters = summary.get("distance", 0)
+        # Process all routes (main + alternatives)
+        routes = []
+        for feat in features:
+            coords = feat["geometry"]["coordinates"]
+            converted = [[lat, lon] for lon, lat in coords]
+            
+            # Extract summary information
+            summary = feat.get("properties", {}).get("summary", {})
+            duration_seconds = summary.get("duration", 0)
+            distance_meters = summary.get("distance", 0)
+            
+            # Convert to minutes and kilometers
+            duration_minutes = duration_seconds / 60 if duration_seconds else None
+            distance_km = distance_meters / 1000 if distance_meters else None
+            
+            routes.append({
+                "coords": converted,
+                "duration": duration_minutes,
+                "distance": distance_km
+            })
         
-        # Convert to minutes and kilometers
-        duration_minutes = duration_seconds / 60 if duration_seconds else None
-        distance_km = distance_meters / 1000 if distance_meters else None
-        
-        result = {
-            "coords": converted,
-            "duration": duration_minutes,
-            "distance": distance_km
-        }
+        result = {"routes": routes}
         
         # Return only the coordinates (no summary/raw) so frontend doesn't show route calculation details
         if debug:
@@ -266,9 +292,16 @@ async def route(req: RouteReq, debug: bool = False, force_local: bool = False): 
     # Try local fallback
     try:
         coords_local = await run_in_threadpool(compute_local_route_sync, req.origin, req.destination, req.avoid_polygons)
+        result = {
+            "routes": [{
+                "coords": coords_local,
+                "duration": None,
+                "distance": None
+            }]
+        }
         if debug:
-            return {"coords": coords_local, "source": "local"}
-        return {"coords": coords_local}
+            result["source"] = "local"
+        return result
     except Exception:
         logger.exception("Local fallback failed or is unavailable")
         raise HTTPException(status_code=502, detail="ORS error and local fallback failed or unavailable")
