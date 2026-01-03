@@ -8,23 +8,30 @@ import {
   Typography,
   Avatar,
   Link,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useNavigate } from "react-router-dom";
+import { useUser } from '../context/UserContext';
+import { loginUser } from '../services/api';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     let valid = true;
 
-    if (!email.includes("@")) {
+    if (email.trim() === "") {
       setEmailError(true);
       valid = false;
     } else {
@@ -40,11 +47,26 @@ export default function Login() {
 
     if (!valid) return;
 
-    // Guardar sesión
-    localStorage.setItem("user", email);
+    setLoading(true);
+    setError("");
 
-    // Redirigir a home (mapa)
-    navigate("/home");
+    try {
+      const response = await loginUser(email, password);
+      
+      // Guardar token y datos del usuario en el contexto
+      login(response.token, {
+        user_id: response.user_id,
+        email: response.email,
+        name: response.name
+      });
+
+      // Redirigir a home (mapa)
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const goToRegister = () => {
@@ -97,14 +119,21 @@ export default function Login() {
             Rutas Alternas - CDMX
           </Typography>
 
+          {error && (
+            <Alert severity="error" sx={{ width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+
           <TextField
-            label="Correo electrónico"
-            type="email"
+            label="Usuario o correo"
+            type="text"
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={emailError}
-            helperText={emailError ? "Ingresa un correo válido" : ""}
+            helperText={emailError ? "Ingresa tu usuario o correo" : ""}
+            disabled={loading}
           />
 
           <TextField
@@ -113,8 +142,10 @@ export default function Login() {
             fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
             error={passwordError}
             helperText={passwordError ? "La contraseña no puede estar vacía" : ""}
+            disabled={loading}
           />
 
           <Button
@@ -127,8 +158,9 @@ export default function Login() {
               textTransform: "none",
             }}
             onClick={handleLogin}
+            disabled={loading}
           >
-            Ingresar
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Ingresar"}
           </Button>
 
           <Typography variant="body2" sx={{ mt: 1 }}>

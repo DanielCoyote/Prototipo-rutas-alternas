@@ -2,7 +2,7 @@
 Authentication API endpoints for user registration and login.
 """
 from fastapi import APIRouter, HTTPException, Depends, Header
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 from datetime import timedelta
 import logging
@@ -17,13 +17,13 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 
 # Request/Response Models
 class RegisterRequest(BaseModel):
-    email: EmailStr
+    email: str  # Acepta cualquier string, no solo emails válidos
     password: str
     name: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str  # Acepta cualquier string como identificador
     password: str
 
 

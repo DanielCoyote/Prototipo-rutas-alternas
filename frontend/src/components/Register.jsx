@@ -8,25 +8,33 @@ import {
   Typography,
   Avatar,
   Link,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useNavigate } from "react-router-dom";
+import { useUser } from '../context/UserContext';
+import { registerUser } from '../services/api';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPwd, setConfirmPwd] = useState("");
+  const [name, setName] = useState("");
 
   const [emailError, setEmailError] = useState(false);
   const [pwdError, setPwdError] = useState(false);
   const [confirmError, setConfirmError] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     let valid = true;
 
-    if (!email.includes("@")) {
+    if (email.trim() === "") {
       setEmailError(true);
       valid = false;
     } else {
@@ -49,8 +57,26 @@ export default function Register() {
 
     if (!valid) return;
 
-    localStorage.setItem("user", email);
-    navigate("/login");
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await registerUser(email, password, name || null);
+      
+      // Iniciar sesión automáticamente después del registro
+      login(response.token, {
+        user_id: response.user_id,
+        email: response.email,
+        name: response.name
+      });
+
+      // Redirigir a home
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Error al registrarse");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,14 +122,30 @@ export default function Register() {
             Crear cuenta
           </Typography>
 
+          {error && (
+            <Alert severity="error" sx={{ width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+
           <TextField
-            label="Correo electrónico"
-            type="email"
+            label="Nombre (opcional)"
+            type="text"
+            fullWidth
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={loading}
+          />
+
+          <TextField
+            label="Usuario o correo"
+            type="text"
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={emailError}
-            helperText={emailError ? "Debe ingresar un correo válido" : ""}
+            helperText={emailError ? "Debe ingresar un usuario o correo" : ""}
+            disabled={loading}
           />
 
           <TextField
@@ -116,6 +158,7 @@ export default function Register() {
             helperText={
               pwdError ? "La contraseña debe tener al menos 6 caracteres" : ""
             }
+            disabled={loading}
           />
 
           <TextField
@@ -124,10 +167,12 @@ export default function Register() {
             fullWidth
             value={confirmPwd}
             onChange={(e) => setConfirmPwd(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleRegister()}
             error={confirmError}
             helperText={
               confirmError ? "Las contraseñas no coinciden" : ""
             }
+            disabled={loading}
           />
 
           <Button
@@ -140,8 +185,9 @@ export default function Register() {
               textTransform: "none",
             }}
             onClick={handleRegister}
+            disabled={loading}
           >
-            Registrarme
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Registrarme"}
           </Button>
 
           <Typography variant="body2" sx={{ mt: 1 }}>

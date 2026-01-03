@@ -3,25 +3,28 @@ Security module for password hashing and JWT token management.
 """
 from datetime import datetime, timedelta
 from typing import Optional
-from passlib.context import CryptContext
+import hashlib
+import secrets
 from jose import JWTError, jwt
 from .config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRATION_HOURS
-
-# Password hashing context using bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
     """
-    Hash a plain password using bcrypt.
+    Hash a password using SHA-256 with a random salt.
     
     Args:
         password: Plain text password
         
     Returns:
-        Hashed password string
+        Hashed password string in format: salt$hash
     """
-    return pwd_context.hash(password)
+    # Generate a random salt
+    salt = secrets.token_hex(16)
+    # Hash password with salt
+    pwd_hash = hashlib.sha256((salt + password).encode('utf-8')).hexdigest()
+    # Return salt and hash separated by $
+    return f"{salt}${pwd_hash}"
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -30,12 +33,20 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     
     Args:
         plain_password: Plain text password to verify
-        hashed_password: Hashed password from database
+        hashed_password: Hashed password from database (format: salt$hash)
         
     Returns:
         True if password matches, False otherwise
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        # Split salt and hash
+        salt, stored_hash = hashed_password.split('$')
+        # Hash the provided password with the stored salt
+        pwd_hash = hashlib.sha256((salt + plain_password).encode('utf-8')).hexdigest()
+        # Compare hashes
+        return pwd_hash == stored_hash
+    except (ValueError, AttributeError):
+        return False
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
