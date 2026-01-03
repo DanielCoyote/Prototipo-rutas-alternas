@@ -1,8 +1,10 @@
 import "./SearchBar.css";
 import { useState, useEffect, useRef } from "react";
 import { autocomplete } from "../../services/ors";
+import { useNavigate } from "react-router-dom";
 
-export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones = () => {} }) {
+export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones = () => {}, onLogout }) {
+  const navigate = useNavigate();
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
 
@@ -173,6 +175,36 @@ export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones 
           <button className="search-button" onClick={handleSearchClick} disabled={!originCoords || !destinationCoords}>
             Buscar ruta
           </button>
+          <button 
+            onClick={() => navigate("/usuarios")} 
+            style={{ 
+              marginLeft: 10, 
+              padding: '8px 16px', 
+              backgroundColor: '#007BFF',
+              color: 'white',
+              border: 'none',
+              borderRadius: 4,
+              cursor: 'pointer'
+            }}
+          >
+            Usuarios
+          </button>
+          {onLogout && (
+            <button 
+              onClick={onLogout} 
+              style={{ 
+                marginLeft: 10, 
+                padding: '8px 16px', 
+                backgroundColor: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: 4,
+                cursor: 'pointer'
+              }}
+            >
+              Cerrar sesión
+            </button>
+          )}
         </div>
       </div>
     </div>

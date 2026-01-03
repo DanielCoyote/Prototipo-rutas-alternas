@@ -2,8 +2,10 @@ import MapView from "../components/MapView";
 import SearchBar from "../components/SearchBar/SearchBar";
 import { getRoute } from "../services/ors";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [route, setRoute] = useState(null);
   const [originMarker, setOriginMarker] = useState(null);
   const [destinationMarker, setDestinationMarker] = useState(null);
@@ -11,6 +13,11 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [avoidZones, setAvoidZones] = useState(false);
   const [avoidPolygonsCache, setAvoidPolygonsCache] = useState(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
 
   // Show error banner in UI
   useEffect(() => {
@@ -71,7 +78,7 @@ export default function Home() {
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
-      <SearchBar onSearch={handleSearch} avoidZones={avoidZones} setAvoidZones={setAvoidZones} />
+      <SearchBar onSearch={handleSearch} avoidZones={avoidZones} setAvoidZones={setAvoidZones} onLogout={handleLogout} />
       <MapView origin={originMarker} destination={destinationMarker} route={route} />
     </div>
   );
