@@ -241,10 +241,26 @@ async def route(req: RouteReq, debug: bool = False, force_local: bool = False): 
         feat = features[0]
         coords = feat["geometry"]["coordinates"]
         converted = [[lat, lon] for lon, lat in coords]
+        
+        # Extract summary information
+        summary = feat.get("properties", {}).get("summary", {})
+        duration_seconds = summary.get("duration", 0)
+        distance_meters = summary.get("distance", 0)
+        
+        # Convert to minutes and kilometers
+        duration_minutes = duration_seconds / 60 if duration_seconds else None
+        distance_km = distance_meters / 1000 if distance_meters else None
+        
+        result = {
+            "coords": converted,
+            "duration": duration_minutes,
+            "distance": distance_km
+        }
+        
         # Return only the coordinates (no summary/raw) so frontend doesn't show route calculation details
         if debug:
-            return {"coords": converted, "source": "ors"}
-        return {"coords": converted}
+            result["source"] = "ors"
+        return result
 
     logger.error("ORS returned error for route: %s %s", r.status_code, r.text)
     # Try local fallback

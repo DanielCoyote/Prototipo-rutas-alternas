@@ -126,3 +126,62 @@ export async function deleteFavorite(favoriteId) {
   
   return response.json();
 }
+
+/**
+ * Get route history
+ */
+export async function getRouteHistory(limit = 10) {
+  const response = await fetch(`${API_BASE_URL}/route/history?limit=${limit}`, {
+    method: 'GET',
+    headers: getAuthHeaders()
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al obtener historial');
+  }
+  
+  return response.json();
+}
+
+/**
+ * Save route to history
+ */
+export async function saveRouteHistory(originLabel, destinationLabel, originCoords, destinationCoords, durationMinutes, distanceKm) {
+  const response = await fetch(`${API_BASE_URL}/route/history`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      origin_label: originLabel,
+      destination_label: destinationLabel,
+      origin_coords: originCoords,
+      destination_coords: destinationCoords,
+      duration_minutes: durationMinutes,
+      distance_km: distanceKm
+    })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al guardar ruta');
+  }
+  
+  return response.json();
+}
+
+/**
+ * Delete route from history
+ */
+export async function deleteRouteHistory(routeId) {
+  const response = await fetch(`${API_BASE_URL}/route/history/${routeId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al eliminar ruta');
+  }
+  
+  return response.json();
+}

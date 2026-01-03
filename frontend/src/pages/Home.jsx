@@ -1,6 +1,7 @@
 import MapView from "../components/MapView";
 import SearchBar from "../components/SearchBar/SearchBar";
 import { getRoute } from "../services/ors";
+import { saveRouteHistory } from "../services/api";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +15,7 @@ export default function Home() {
   const [avoidZones, setAvoidZones] = useState(false);
   const [avoidPolygonsCache, setAvoidPolygonsCache] = useState(null);
   const [externalDestination, setExternalDestination] = useState(null);
+  const [lastRouteInfo, setLastRouteInfo] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -64,6 +66,29 @@ export default function Home() {
       const res = await getRoute(originObj.coords, destinationObj.coords, avoid);
       if (res && res.coords) {
         setRoute(res.coords);
+        
+        // Save route info for later
+        setLastRouteInfo({
+          origin: originObj,
+          destination: destinationObj,
+          duration: res.duration,
+          distance: res.distance
+        });
+        
+        // Save to history
+        try {
+          await saveRouteHistory(
+            originObj.label,
+            destinationObj.label,
+            originObj.coords,
+            destinationObj.coords,
+            res.duration,
+            res.distance
+          );
+        } catch (historyError) {
+          console.error("Error saving to history:", historyError);
+          // Don't show error to user, route was calculated successfully
+        }
       } else {
         setRoute(null);
         setError('No se encontró ruta para las coordenadas proporcionadas');
@@ -92,14 +117,20 @@ export default function Home() {
     });
   };
 
+  // Handle route selection from history
+  const handleRouteFromHistory = (originObj, destinationObj) => {
+    handleSearch(originObj, destinationObj);
+  };
+
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
       <SearchBar 
         onSearch={handleSearch} 
-        avoidZones={avoidZones} 
-        setAvoidZones={setAvoidZones} 
         onLogout={handleLogout}
         externalDestination={externalDestination}
+        onRouteFromHistory={handleRouteFromHistory}
+        avoidZones={avoidZones}
+        setAvoidZones={setAvoidZones}
       />
       <MapView 
         origin={originMarker} 
