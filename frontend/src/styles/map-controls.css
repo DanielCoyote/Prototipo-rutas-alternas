@@ -4,9 +4,95 @@
   right: 20px !important;
 }
 
+.leaflet-top.leaflet-left {
+  top: 20px !important;
+  left: 20px !important;
+}
+
 /* Ocultar completamente el logo de Leaflet */
 .leaflet-control-attribution {
   display: none !important;
+}
+
+/* Selector de estilo de mapa */
+.map-style-selector {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.style-selector-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  background-color: #4FD1C5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.style-selector-btn:hover {
+  background-color: #38B2AC;
+  transform: scale(1.05);
+}
+
+.style-selector-menu {
+  position: absolute;
+  bottom: 50px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  width: 40px;
+  z-index: 1000;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.style-selector-menu[style*="display: block"] {
+  max-height: 300px;
+}
+
+.style-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  background: white;
+  border: none;
+  border-bottom: 1px solid #E2E8F0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.style-option:last-child {
+  border-bottom: none;
+}
+
+.style-option:hover {
+  background-color: #F7FAFC;
+}
+
+.style-option.active {
+  background-color: #E6FFFA;
+  box-shadow: inset 3px 0 0 #4FD1C5;
+}
+
+.style-preview {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.style-label {
+  display: none;
 }
 
 /* Botón de ubicación */

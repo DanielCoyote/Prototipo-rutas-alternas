@@ -8,6 +8,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } 
 import PolygonsLayer from "./PolygonsLayer";
 import FavoriteMarkers from "./FavoriteMarkers";
 import LocationButton from "./LocationButton";
+import MapStyleSelector from "./MapStyleSelector";
 import { createFavorite } from "../services/api";
 
 function FitBounds({ route, origin, destination }) {
@@ -47,6 +48,10 @@ export default function MapView({ origin, destination, route, onDestinationChang
   const [favoriteLabel, setFavoriteLabel] = useState("");
   const [clickedLocation, setClickedLocation] = useState(null);
   const [favoritesKey, setFavoritesKey] = useState(0);
+  const [mapStyle, setMapStyle] = useState({
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: '&copy; OpenStreetMap contributors'
+  });
 
   const handleMapClick = (e) => {
     setClickedLocation([e.latlng.lat, e.latlng.lng]);
@@ -78,6 +83,13 @@ export default function MapView({ origin, destination, route, onDestinationChang
     }
   };
 
+  const handleStyleChange = (styleKey, styleData) => {
+    setMapStyle({
+      url: styleData.url,
+      attribution: styleData.attribution
+    });
+  };
+
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
       <MapContainer
@@ -88,8 +100,11 @@ export default function MapView({ origin, destination, route, onDestinationChang
       >
         <ZoomControl position="bottomright" />
         <LocationButton />
+        <MapStyleSelector onStyleChange={handleStyleChange} />
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          key={mapStyle.url}
+          url={mapStyle.url}
+          attribution={mapStyle.attribution}
         />
 
         <PolygonsLayer styleOptions={{ fillColor: undefined }} />
