@@ -7,6 +7,49 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  background-color: #F56565;
+  border-radius: 34px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 2px solid #E53E3E;
+}
+
+.toggle-switch.active {
+  background-color: #7ED6C5;
+  border-color: #38A169;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-switch.active .toggle-slider {
+  transform: translateX(28px);
+}
+
+.toggle-icon {
+  font-size: 12px;
+  font-weight: bold;
+  color: #2D3748;
+}
+
 .search-header {
   background: #7ED6C5;
   padding: 12px 18px;

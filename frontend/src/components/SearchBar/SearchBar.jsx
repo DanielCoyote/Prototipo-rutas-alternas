@@ -164,17 +164,23 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
         <h2 style={{ margin: 0, fontSize: "18px", color: "#2D3748" }}>Direcciones de Viaje</h2>
       </div>
 
-      {/* Checkbox para evitar zonas de riesgo */}
-      <div style={{ padding: "8px 16px", backgroundColor: "#F7FAFC", borderBottom: "1px solid #E2E8F0" }}>
-        <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: "14px", color: "#2D3748" }}>
-          <input
-            type="checkbox"
-            checked={avoidZones}
-            onChange={(e) => setAvoidZones(e.target.checked)}
-            style={{ marginRight: "8px", width: "16px", height: "16px", cursor: "pointer" }}
-          />
-          <span style={{ fontWeight: "500" }}>🚫 Evitar zonas de riesgo inundables</span>
-        </label>
+      {/* Toggle para evitar zonas de riesgo */}
+      <div style={{ padding: "12px 16px", backgroundColor: "#F7FAFC", borderBottom: "1px solid #E2E8F0" }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: "14px", fontWeight: "500", color: "#2D3748" }}>
+            Evitar zonas de riesgo inundables
+          </span>
+          <div 
+            className={`toggle-switch ${avoidZones ? 'active' : ''}`}
+            onClick={() => setAvoidZones(!avoidZones)}
+          >
+            <div className="toggle-slider">
+              <span className="toggle-icon">
+                {avoidZones ? '✓' : '✕'}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Menu desplegable animado */}
@@ -205,7 +211,7 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
                 gap: "8px"
               }}
             >
-              📜 Historial de Rutas
+              Historial de Rutas
             </button>
             <button
               onClick={() => navigate("/usuarios")}
@@ -225,7 +231,7 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
                 gap: "8px"
               }}
             >
-              👥 Usuarios
+              Usuarios
             </button>
             {onLogout && (
               <button
@@ -248,7 +254,7 @@ export default function SearchBar({ onSearch, onLogout, externalDestination, onR
                   gap: "8px"
                 }}
               >
-                🚪 Cerrar Sesión
+                Cerrar Sesión
               </button>
             )}
           </div>

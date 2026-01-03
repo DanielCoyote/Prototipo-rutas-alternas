@@ -199,16 +199,22 @@ export default function MapView({
         {routes && routes.length > 0 && routes.map((route, index) => {
           const isPrimary = index === selectedRouteIndex;
           const polylineColor = '#3B82F6'; // Azul
-          const opacity = isPrimary ? 1.0 : 0.6;
+          const opacity = isPrimary ? 1.0 : 0.5;
           const weight = isPrimary ? 5 : 4;
           
           return (
-            <div key={index}>
+            <div key={`route-${index}-${selectedRouteIndex}`}>
               <Polyline
+                key={`polyline-${index}-${isPrimary}`}
                 positions={route.coords}
                 color={polylineColor}
                 opacity={opacity}
                 weight={weight}
+                pathOptions={{
+                  color: polylineColor,
+                  opacity: opacity,
+                  weight: weight
+                }}
                 eventHandlers={{
                   click: () => {
                     if (onRouteSelect && index !== selectedRouteIndex) {
