@@ -48,6 +48,8 @@ export default function FavoriteMarkers({ onFavoriteClick }) {
     if (onFavoriteClick) {
       onFavoriteClick([favorite.latitude, favorite.longitude], favorite.label);
     }
+    // Close the popup after selection
+    // Note: Leaflet doesn't provide direct popup close in this context
   };
 
   if (loading) return null;

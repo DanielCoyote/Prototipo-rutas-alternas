@@ -13,6 +13,7 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [avoidZones, setAvoidZones] = useState(false);
   const [avoidPolygonsCache, setAvoidPolygonsCache] = useState(null);
+  const [externalDestination, setExternalDestination] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -77,16 +78,29 @@ export default function Home() {
   };
 
   // Handle destination change from favorite marker
-  const handleDestinationChange = (coords) => {
+  const handleDestinationChange = (coords, label) => {
     // coords is [lat, lon]
     setDestinationMarker(coords);
     // Clear route when destination changes
     setRoute(null);
+    
+    // Update SearchBar with favorite info
+    // coords format: [lat, lon], need to convert to [lon, lat] for ORS
+    setExternalDestination({
+      label: label || `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}`,
+      coords: [coords[1], coords[0]] // Convert to [lon, lat]
+    });
   };
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
-      <SearchBar onSearch={handleSearch} avoidZones={avoidZones} setAvoidZones={setAvoidZones} onLogout={handleLogout} />
+      <SearchBar 
+        onSearch={handleSearch} 
+        avoidZones={avoidZones} 
+        setAvoidZones={setAvoidZones} 
+        onLogout={handleLogout}
+        externalDestination={externalDestination}
+      />
       <MapView 
         origin={originMarker} 
         destination={destinationMarker} 

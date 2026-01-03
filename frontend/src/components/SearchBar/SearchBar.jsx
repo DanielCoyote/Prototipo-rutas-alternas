@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { autocomplete } from "../../services/ors";
 import { useNavigate } from "react-router-dom";
 
-export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones = () => {}, onLogout }) {
+export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones = () => {}, onLogout, externalDestination }) {
   const navigate = useNavigate();
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
@@ -69,6 +69,14 @@ export default function SearchBar({ onSearch, avoidZones = false, setAvoidZones 
       }
     };
   }, []);
+
+  // Actualizar destino cuando se selecciona desde el mapa (favoritos)
+  useEffect(() => {
+    if (externalDestination) {
+      setDestination(externalDestination.label);
+      setDestinationCoords(externalDestination.coords);
+    }
+  }, [externalDestination]);
 
   const selectSuggestion = (item, field) => {
     if (field === "origin") {

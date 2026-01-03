@@ -73,7 +73,7 @@ export default function MapView({ origin, destination, route, onDestinationChang
 
   const handleFavoriteClick = (coords, label) => {
     if (onDestinationChange) {
-      onDestinationChange(coords);
+      onDestinationChange(coords, label);
     }
   };
 
