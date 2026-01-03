@@ -4,6 +4,11 @@
   right: 20px !important;
 }
 
+/* Ocultar completamente el logo de Leaflet */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
 .leaflet-control-zoom {
   border: none !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
