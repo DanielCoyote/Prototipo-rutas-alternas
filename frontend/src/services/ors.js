@@ -1,17 +1,57 @@
-const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImFhYzc5Mzc1YzY3NTQyNjQ5NDIxOWNiYTM0YmIwNzFkIiwiaCI6Im11cm11cjY0In0=";
+// Now requests go through the local backend proxy at /api/*
 
 export async function autocomplete(query) {
   if (!query) return [];
 
-  const url = `https://api.openrouteservice.org/geocode/autocomplete?api_key=${ORS_API_KEY}&text=${encodeURIComponent(query)}&boundary.country=MEX`;
+  try {
+    const response = await fetch(`/api/autocomplete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: query })
+    });
 
-  const response = await fetch(url);
-  const data = await response.json();
+    if (!response.ok) {
+      const body = await response.text();
+      console.error('Autocomplete proxy error', response.status, body);
+      // throw so UI can show a message
+      throw new Error(`Autocomplete failed: ${response.status}`);
+    }
 
-  if (!data.features) return [];
+    const data = await response.json();
+    return data.map(item => ({ label: item.label, coords: item.coords }));
+  } catch (err) {
+    console.error('Network error during autocomplete', err);
+    throw new Error('Network error during autocomplete');
+  }
+}
 
-  return data.features.map(item => ({
-    label: item.properties.label,
-    coords: item.geometry.coordinates
-  }));
+export async function getRoute(originCoords, destCoords, avoidPolygons = null) {
+  if (!originCoords || !destCoords) return null;
+
+  try {
+    const body = { origin: originCoords, destination: destCoords };
+    if (avoidPolygons) body.avoid_polygons = avoidPolygons;
+
+    const response = await fetch(`/api/route`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      console.error('Route proxy error', response.status, body);
+      throw new Error(body || `Route proxy error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    // data.routes is now an array of route objects
+    // Each route has: { coords: [[lat, lon], ...], duration: minutes, distance: km }
+    return { 
+      routes: data.routes || []
+    };
+  } catch (err) {
+    console.error('Network error during getRoute', err);
+    throw err;
+  }
 }
