@@ -271,6 +271,12 @@ export default function MapView({
         {/* Renderizar todas las rutas */}
         {routes && routes.length > 0 && routes.map((route, index) => {
           const isPrimary = index === selectedRouteIndex;
+          
+          // Durante navegación, solo mostrar la ruta seleccionada
+          if (isNavigating && !isPrimary) {
+            return null;
+          }
+          
           const polylineColor = '#3B82F6'; // Azul
           const opacity = isPrimary ? 1.0 : 0.5;
           const weight = isPrimary ? 5 : 4;

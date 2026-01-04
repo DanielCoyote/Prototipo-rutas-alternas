@@ -3,6 +3,14 @@
   border-radius: 12px;
   padding: 16px 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.search-results-container.navigating {
+  padding: 16px 20px;
+  max-height: 160px;
 }
 
 .search-results-header {
@@ -185,6 +193,51 @@
 
 .navigation-button svg {
   flex-shrink: 0;
+}
+
+/* Información de navegación */
+.navigation-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 8px 0;
+  margin-bottom: 12px;
+}
+
+.nav-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-info-item svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.nav-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-info-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.nav-info-value {
+  font-size: 18px;
+  color: white;
+  font-weight: bold;
+}
+
+.nav-info-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Responsive adjustments */

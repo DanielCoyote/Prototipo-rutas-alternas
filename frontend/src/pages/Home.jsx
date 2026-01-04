@@ -294,6 +294,14 @@ export default function Home() {
     setCurrentHeading(0);
     setCurrentPosition(null);
     setLastKnownPosition(null);
+    
+    // Limpiar todo: rutas, marcadores y búsquedas
+    setRoutes(null);
+    setOriginMarker(null);
+    setDestinationMarker(null);
+    setSelectedRouteIndex(0);
+    setExternalDestination(null);
+    setLastRouteInfo(null);
   };
 
   // Cleanup al desmontar componente
@@ -316,36 +324,78 @@ export default function Home() {
         setAvoidZones={setAvoidZones}
       />
       
-      {/* Indicador de velocidad durante navegación */}
+      {/* Indicador de velocidad durante navegación - Circular */}
       {isNavigating && (
         <div style={{
           position: "absolute",
-          top: "80px",
-          right: "20px",
-          zIndex: 1001,
-          backgroundColor: "white",
-          padding: "12px 16px",
-          borderRadius: "12px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-          border: "2px solid #3B82F6",
-          minWidth: "100px",
-          textAlign: "center"
+          bottom: "100px",
+          left: "20px",
+          zIndex: 1001
         }}>
-          <div style={{
-            fontSize: "32px",
-            fontWeight: "bold",
-            color: "#3B82F6",
-            lineHeight: "1"
-          }}>
-            {Math.round(currentSpeed)}
-          </div>
-          <div style={{
-            fontSize: "14px",
-            color: "#666",
-            marginTop: "4px"
-          }}>
-            km/h
-          </div>
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            {/* Fondo del círculo */}
+            <circle
+              cx="60"
+              cy="60"
+              r="55"
+              fill="white"
+              stroke="#E5E7EB"
+              strokeWidth="2"
+              style={{
+                filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15))"
+              }}
+            />
+            
+            {/* Anillo de velocidad */}
+            <circle
+              cx="60"
+              cy="60"
+              r="48"
+              fill="none"
+              stroke="#E5E7EB"
+              strokeWidth="8"
+              strokeLinecap="round"
+            />
+            <circle
+              cx="60"
+              cy="60"
+              r="48"
+              fill="none"
+              stroke="#3B82F6"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={`${(currentSpeed / 120) * 301.6} 301.6`}
+              transform="rotate(-90 60 60)"
+              style={{
+                transition: "stroke-dasharray 0.3s ease"
+              }}
+            />
+            
+            {/* Texto de velocidad */}
+            <text
+              x="60"
+              y="55"
+              textAnchor="middle"
+              style={{
+                fontSize: "32px",
+                fontWeight: "bold",
+                fill: "#3B82F6"
+              }}
+            >
+              {Math.round(currentSpeed)}
+            </text>
+            <text
+              x="60"
+              y="75"
+              textAnchor="middle"
+              style={{
+                fontSize: "14px",
+                fill: "#666"
+              }}
+            >
+              km/h
+            </text>
+          </svg>
         </div>
       )}
       
