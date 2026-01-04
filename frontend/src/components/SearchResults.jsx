@@ -5,7 +5,7 @@ import './SearchResults.css';
  * Componente que muestra el panel de resultados con las opciones de rutas
  * Permite al usuario ver y seleccionar entre múltiples alternativas
  */
-const SearchResults = ({ routes, selectedRouteIndex, onSelectRoute }) => {
+const SearchResults = ({ routes, selectedRouteIndex, onSelectRoute, isNavigating, onStartNavigation, onStopNavigation }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   // Si no hay rutas, no mostrar nada
@@ -91,6 +91,37 @@ const SearchResults = ({ routes, selectedRouteIndex, onSelectRoute }) => {
             </div>
           </div>
         ))}
+      </div>
+      
+      {/* Botón de navegación */}
+      <div className="navigation-button-container">
+        {!isNavigating ? (
+          <button 
+            className="navigation-button start"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStartNavigation();
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <span>Iniciar Navegación</span>
+          </button>
+        ) : (
+          <button 
+            className="navigation-button stop"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStopNavigation();
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12"/>
+            </svg>
+            <span>Detener Navegación</span>
+          </button>
+        )}
       </div>
     </div>
   );

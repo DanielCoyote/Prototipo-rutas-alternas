@@ -18,6 +18,14 @@ export default function Home() {
   const [avoidPolygonsCache, setAvoidPolygonsCache] = useState(null);
   const [externalDestination, setExternalDestination] = useState(null);
   const [lastRouteInfo, setLastRouteInfo] = useState(null);
+  
+  // Estados para navegación en tiempo real
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState(null);
+  const [currentSpeed, setCurrentSpeed] = useState(0);
+  const [currentHeading, setCurrentHeading] = useState(0);
+  const [watchId, setWatchId] = useState(null);
+  const [lastKnownPosition, setLastKnownPosition] = useState(null);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -149,6 +157,153 @@ export default function Home() {
   const handleRouteFromHistory = (originObj, destinationObj) => {
     handleSearch(originObj, destinationObj);
   };
+
+  // Calcular distancia entre dos puntos en metros
+  const calculateDistance = (pos1, pos2) => {
+    const R = 6371e3; // Radio de la Tierra en metros
+    const φ1 = (pos1[0] * Math.PI) / 180;
+    const φ2 = (pos2[0] * Math.PI) / 180;
+    const Δφ = ((pos2[0] - pos1[0]) * Math.PI) / 180;
+    const Δλ = ((pos2[1] - pos1[1]) * Math.PI) / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+  };
+
+  // Función para recalcular la ruta cuando el usuario se desvía
+  const recalculateRoute = async (newOrigin) => {
+    if (!lastRouteInfo || !lastRouteInfo.destination) {
+      console.error("No hay información de destino para recalcular");
+      return;
+    }
+
+    console.log("Recalculando ruta desde nueva posición...");
+
+    try {
+      // Convertir [lat, lon] a [lon, lat] para la API
+      const originCoords = [newOrigin[1], newOrigin[0]];
+      const destinationCoords = lastRouteInfo.destination.coords;
+
+      let avoid = null;
+      if (avoidZones && avoidPolygonsCache) {
+        avoid = avoidPolygonsCache;
+      }
+
+      const res = await getRoute(originCoords, destinationCoords, avoid);
+      
+      if (res && res.routes && res.routes.length > 0) {
+        setRoutes(res.routes);
+        // Mantener la ruta seleccionada en el índice 0 (la nueva ruta principal)
+        setSelectedRouteIndex(0);
+        
+        // Actualizar marcador de origen
+        setOriginMarker(newOrigin);
+        
+        console.log("Ruta recalculada exitosamente");
+      }
+    } catch (err) {
+      console.error("Error recalculando ruta:", err);
+      // No detenemos la navegación, solo mostramos el error
+    }
+  };
+
+  // Función para iniciar la navegación
+  const startNavigation = () => {
+    if (!routes || routes.length === 0) {
+      alert("Primero debes calcular una ruta");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      alert("Tu navegador no soporta geolocalización");
+      return;
+    }
+
+    setIsNavigating(true);
+
+    const id = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude, heading, speed } = position.coords;
+        const newPos = [latitude, longitude];
+
+        setCurrentPosition(newPos);
+        setOriginMarker(newPos);
+
+        // Actualizar velocidad (convertir m/s a km/h)
+        if (speed !== null && speed !== undefined) {
+          setCurrentSpeed(Math.max(0, speed * 3.6));
+        }
+
+        // Actualizar dirección
+        if (heading !== null && heading !== undefined) {
+          setCurrentHeading(heading);
+        }
+
+        // Verificar si nos desviamos de la ruta
+        if (routes && routes[selectedRouteIndex] && lastKnownPosition) {
+          const selectedRoute = routes[selectedRouteIndex];
+          let minDistance = Infinity;
+
+          // Calcular distancia mínima a cualquier punto de la ruta
+          selectedRoute.coords.forEach(routePoint => {
+            const dist = calculateDistance(newPos, routePoint);
+            if (dist < minDistance) {
+              minDistance = dist;
+            }
+          });
+
+          // Si nos desviamos más de 50 metros, recalcular
+          if (minDistance > 50 && lastRouteInfo) {
+            recalculateRoute(newPos);
+          }
+        }
+
+        setLastKnownPosition(newPos);
+      },
+      (error) => {
+        console.error('Error de geolocalización:', error);
+        if (error.code === error.PERMISSION_DENIED) {
+          alert('Permiso de ubicación denegado. Por favor habilita la ubicación para usar la navegación.');
+          stopNavigation();
+        } else {
+          setError('Error al obtener ubicación');
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 10000
+      }
+    );
+
+    setWatchId(id);
+  };
+
+  // Función para detener la navegación
+  const stopNavigation = () => {
+    if (watchId !== null) {
+      navigator.geolocation.clearWatch(watchId);
+      setWatchId(null);
+    }
+    setIsNavigating(false);
+    setCurrentSpeed(0);
+    setCurrentHeading(0);
+    setCurrentPosition(null);
+    setLastKnownPosition(null);
+  };
+
+  // Cleanup al desmontar componente
+  useEffect(() => {
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [watchId]);
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
