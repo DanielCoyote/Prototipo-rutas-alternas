@@ -1,0 +1,256 @@
+/* Overlay - fondo oscuro detrás del sidebar */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 9998;
+  pointer-events: none;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: all;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 320px;
+  height: 100vh;
+  background: white;
+  z-index: 9999;
+  transition: left 0.3s ease-in-out;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+/* Header del sidebar */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: linear-gradient(135deg, #4FD1C5 0%, #38B2AC 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sidebar-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Contenido del sidebar */
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Menú principal */
+.sidebar-menu {
+  padding: 12px;
+}
+
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #2D3748;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.sidebar-menu-item:hover {
+  background: #F7FAFC;
+  border-color: #4FD1C5;
+  transform: translateX(4px);
+}
+
+.sidebar-menu-item.danger {
+  background: #FED7D7;
+  border-color: #FC8181;
+  color: #C53030;
+}
+
+.sidebar-menu-item.danger:hover {
+  background: #FEB2B2;
+  border-color: #F56565;
+}
+
+.sidebar-menu-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.sidebar-menu-text {
+  flex: 1;
+}
+
+.sidebar-menu-arrow {
+  font-size: 20px;
+  color: #CBD5E0;
+  margin-left: 8px;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: #E2E8F0;
+  margin: 12px 0;
+}
+
+/* Vista de detalle (historial, favoritos) */
+.sidebar-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar-view-header {
+  padding: 16px;
+  border-bottom: 1px solid #E2E8F0;
+  background: #F7FAFC;
+}
+
+.sidebar-back-btn {
+  background: transparent;
+  border: none;
+  color: #4FD1C5;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-bottom: 8px;
+  transition: color 0.2s;
+}
+
+.sidebar-back-btn:hover {
+  color: #38B2AC;
+}
+
+.sidebar-view-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2D3748;
+}
+
+.sidebar-view-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Scrollbar personalizado */
+.sidebar-content::-webkit-scrollbar,
+.sidebar-view-content::-webkit-scrollbar,
+.route-history-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-content::-webkit-scrollbar-track,
+.sidebar-view-content::-webkit-scrollbar-track,
+.route-history-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb,
+.sidebar-view-content::-webkit-scrollbar-thumb,
+.route-history-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4FD1C5 0%, #38B2AC 100%);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover,
+.sidebar-view-content::-webkit-scrollbar-thumb:hover,
+.route-history-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #38B2AC 0%, #319795 100%);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Historial de rutas */
+.route-history-container {
+  padding: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.route-history-item {
+  padding: 14px 16px;
+  margin: 0;
+  background: white;
+  border-bottom: 1px solid #E2E8F0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.route-history-item:hover {
+  background: linear-gradient(90deg, #E6FFFA 0%, #F7FAFC 100%);
+  border-left: 3px solid #4FD1C5;
+  padding-left: 13px;
+}
+
+.route-history-item:last-child {
+  border-bottom: none;
+}
+
+.route-history-delete-btn {
+  padding: 6px 10px;
+  background: transparent;
+  color: #CBD5E0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  fontSize: 16px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.route-history-delete-btn:hover {
+  background: #FED7D7;
+  color: #F56565;
+  transform: scale(1.1);
+}
+}

@@ -59,7 +59,7 @@ export default function RouteHistory({ onRouteSelect, onClose }) {
 
   if (loading) {
     return (
-      <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
+      <div style={{ padding: "20px", textAlign: "center", color: "#718096" }}>
         Cargando historial...
       </div>
     );
@@ -67,105 +67,93 @@ export default function RouteHistory({ onRouteSelect, onClose }) {
 
   if (routes.length === 0) {
     return (
-      <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
+      <div style={{ 
+        padding: "40px 20px", 
+        textAlign: "center", 
+        color: "#718096",
+        fontSize: "14px"
+      }}>
+        <div style={{ fontSize: "48px", marginBottom: "12px" }}>📜</div>
         No hay rutas en el historial
       </div>
     );
   }
 
   return (
-    <div style={{ 
-      maxHeight: "400px", 
-      overflowY: "auto",
-      padding: "10px"
-    }}>
-      <h3 style={{ 
-        margin: "0 0 15px 0", 
-        fontSize: "16px", 
-        color: "#2D3748",
-        padding: "0 10px"
-      }}>
-        Historial de Rutas (últimas 10)
-      </h3>
-      
+    <div className="route-history-container">
       {routes.map((route) => (
         <div
           key={route.id}
           onClick={() => handleRouteClick(route)}
-          style={{
-            padding: "12px",
-            margin: "8px 0",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            border: "1px solid #E2E8F0",
-            cursor: "pointer",
-            transition: "all 0.2s",
-            position: "relative"
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#F7FAFC";
-            e.currentTarget.style.borderColor = "#4FD1C5";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "white";
-            e.currentTarget.style.borderColor = "#E2E8F0";
-          }}
+          className="route-history-item"
         >
           <div style={{ 
             display: "flex", 
             justifyContent: "space-between",
             alignItems: "start"
           }}>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ 
-                fontSize: "14px", 
-                fontWeight: "bold",
+                fontSize: "13px", 
+                fontWeight: "600",
                 color: "#2D3748",
-                marginBottom: "4px"
+                marginBottom: "6px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px"
               }}>
-                <span style={{ color: "#48BB78" }}>●</span> {route.origin_label}
+                <span style={{ 
+                  color: "#48BB78",
+                  fontSize: "10px",
+                  flexShrink: 0
+                }}>●</span>
+                <span style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}>{route.origin_label}</span>
               </div>
               <div style={{ 
-                fontSize: "14px", 
-                fontWeight: "bold",
+                fontSize: "13px", 
+                fontWeight: "600",
                 color: "#2D3748",
-                marginBottom: "8px"
+                marginBottom: "10px",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px"
               }}>
-                <span style={{ color: "#F56565" }}>📍</span> {route.destination_label}
+                <span style={{ 
+                  fontSize: "14px",
+                  flexShrink: 0
+                }}>📍</span>
+                <span style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}>{route.destination_label}</span>
               </div>
               <div style={{ 
-                fontSize: "12px", 
+                fontSize: "11px", 
                 color: "#718096",
                 display: "flex",
-                gap: "15px"
+                gap: "12px",
+                flexWrap: "wrap"
               }}>
-                <span>⏱️ {formatDuration(route.duration_minutes)}</span>
+                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  ⏱️ {formatDuration(route.duration_minutes)}
+                </span>
                 {route.distance_km && (
-                  <span>📏 {route.distance_km.toFixed(1)} km</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                    📏 {route.distance_km.toFixed(1)} km
+                  </span>
                 )}
               </div>
             </div>
             
             <button
               onClick={(e) => handleDelete(route.id, e)}
-              style={{
-                padding: "6px 10px",
-                backgroundColor: "#FED7D7",
-                color: "#C53030",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "12px",
-                fontWeight: "bold"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#FC8181";
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#FED7D7";
-                e.currentTarget.style.color = "#C53030";
-              }}
+              className="route-history-delete-btn"
+              title="Eliminar"
             >
               🗑️
             </button>

@@ -1,5 +1,6 @@
 import MapView from "../components/MapView";
 import SearchBar from "../components/SearchBar/SearchBar";
+import Sidebar from "../components/Sidebar";
 import SearchResults from "../components/SearchResults";
 import { getRoute } from "../services/ors";
 import { saveRouteHistory } from "../services/api";
@@ -26,6 +27,7 @@ export default function Home() {
   const [currentHeading, setCurrentHeading] = useState(0);
   const [watchId, setWatchId] = useState(null);
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -315,11 +317,16 @@ export default function Home() {
 
   return (
     <div style={{ height: "100vh", width: "100%", position: "relative" }}>
+      <Sidebar 
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onLogout={handleLogout}
+        onRouteFromHistory={handleRouteFromHistory}
+      />
       <SearchBar 
         onSearch={handleSearch} 
-        onLogout={handleLogout}
         externalDestination={externalDestination}
-        onRouteFromHistory={handleRouteFromHistory}
+        onMenuToggle={() => setSidebarOpen(true)}
         avoidZones={avoidZones}
         setAvoidZones={setAvoidZones}
       />
