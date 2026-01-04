@@ -253,4 +253,121 @@
   color: #F56565;
   transform: scale(1.1);
 }
+
+/* ============================================ */
+/* RESPONSIVE DESIGN - Media Queries */
+/* ============================================ */
+
+/* Móviles y tablets (hasta 768px) */
+@media screen and (max-width: 768px) {
+  .sidebar {
+    width: 85%;
+    max-width: 320px;
+  }
+
+  .sidebar-header {
+    padding: 16px;
+  }
+
+  .sidebar-title {
+    font-size: 18px;
+  }
+
+  .sidebar-menu {
+    padding: 10px;
+  }
+
+  .sidebar-menu-item {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .sidebar-menu-icon {
+    font-size: 18px;
+    margin-right: 10px;
+  }
+
+  .sidebar-view-header {
+    padding: 14px;
+  }
+
+  .sidebar-view-title {
+    font-size: 16px;
+  }
+
+  .route-history-item {
+    padding: 12px 14px;
+  }
+
+  .route-history-item:hover {
+    padding-left: 11px;
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media screen and (max-width: 480px) {
+  .sidebar {
+    width: 90%;
+    max-width: 300px;
+  }
+
+  .sidebar-header {
+    padding: 14px;
+  }
+
+  .sidebar-title {
+    font-size: 16px;
+  }
+
+  .sidebar-close-btn {
+    font-size: 20px;
+  }
+
+  .sidebar-menu {
+    padding: 8px;
+  }
+
+  .sidebar-menu-item {
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-menu-icon {
+    font-size: 16px;
+    margin-right: 8px;
+    min-width: 20px;
+  }
+
+  .sidebar-menu-arrow {
+    font-size: 18px;
+  }
+
+  .sidebar-view-header {
+    padding: 12px;
+  }
+
+  .sidebar-view-title {
+    font-size: 15px;
+  }
+
+  .sidebar-back-btn {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .route-history-item {
+    padding: 10px 12px;
+  }
+
+  .route-history-item:hover {
+    padding-left: 9px;
+  }
+
+  .route-history-delete-btn {
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+}
+
 }

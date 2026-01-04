@@ -194,3 +194,151 @@
 .add-favorite-button:active {
   transform: scale(0.95);
 }
+
+/* ============================================ */
+/* RESPONSIVE DESIGN - Media Queries */
+/* ============================================ */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+  .leaflet-bottom.leaflet-right {
+    bottom: 15px !important;
+    right: 15px !important;
+  }
+
+  .leaflet-control-zoom a,
+  .location-button,
+  .style-selector-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 18px !important;
+  }
+
+  .leaflet-control-zoom a {
+    line-height: 36px !important;
+    font-size: 20px !important;
+  }
+}
+
+/* Móviles grandes y tablets pequeñas (481px - 768px) */
+@media screen and (max-width: 768px) {
+  .leaflet-bottom.leaflet-right {
+    bottom: 12px !important;
+    right: 12px !important;
+  }
+
+  .leaflet-top.leaflet-left {
+    top: 15px !important;
+    left: 15px !important;
+  }
+
+  .leaflet-control-zoom a,
+  .location-button,
+  .style-selector-btn {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 18px !important;
+  }
+
+  .leaflet-control-zoom a {
+    line-height: 38px !important;
+    font-size: 22px !important;
+  }
+
+  .location-button {
+    margin-bottom: 8px !important;
+  }
+
+  .map-style-selector {
+    margin-bottom: 8px;
+  }
+
+  .style-selector-menu {
+    bottom: 48px;
+    right: 0;
+  }
+
+  .style-option {
+    padding: 6px 0;
+  }
+
+  .style-preview {
+    font-size: 20px;
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media screen and (max-width: 480px) {
+  .leaflet-bottom.leaflet-right {
+    bottom: 10px !important;
+    right: 10px !important;
+  }
+
+  .leaflet-top.leaflet-left {
+    top: 12px !important;
+    left: 12px !important;
+  }
+
+  .leaflet-control-zoom a,
+  .location-button,
+  .style-selector-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px !important;
+  }
+
+  .leaflet-control-zoom a {
+    line-height: 36px !important;
+    font-size: 20px !important;
+  }
+
+  .location-button {
+    margin-bottom: 6px !important;
+    font-size: 18px !important;
+  }
+
+  .map-style-selector {
+    margin-bottom: 6px;
+  }
+
+  .style-selector-btn {
+    font-size: 18px !important;
+  }
+
+  .style-selector-menu {
+    width: 36px;
+    bottom: 44px;
+  }
+
+  .style-option {
+    padding: 5px 0;
+  }
+
+  .style-preview {
+    font-size: 18px;
+  }
+}
+
+/* Modo landscape en móviles */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .leaflet-control-zoom a,
+  .location-button,
+  .style-selector-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+  }
+
+  .leaflet-control-zoom a {
+    line-height: 32px !important;
+    font-size: 18px !important;
+  }
+
+  .location-button {
+    margin-bottom: 5px !important;
+  }
+
+  .map-style-selector {
+    margin-bottom: 5px;
+  }
+}

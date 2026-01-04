@@ -1,0 +1,97 @@
+/* Home Page Responsive Styles */
+
+.home-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Speedometer container */
+.speedometer-container {
+  position: absolute;
+  bottom: 100px;
+  left: 20px;
+  z-index: 1001;
+}
+
+/* Results container */
+.results-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 90%;
+  max-width: 800px;
+}
+
+/* ============================================ */
+/* RESPONSIVE DESIGN */
+/* ============================================ */
+
+/* Tablets (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+  .speedometer-container {
+    bottom: 90px;
+    left: 15px;
+  }
+
+  .results-container {
+    width: 92%;
+    max-width: 700px;
+    bottom: 15px;
+  }
+}
+
+/* Mobile large (481px - 768px) */
+@media screen and (max-width: 768px) {
+  .speedometer-container {
+    bottom: 80px;
+    left: 10px;
+  }
+
+  .results-container {
+    width: 95%;
+    max-width: none;
+    bottom: 10px;
+  }
+}
+
+/* Mobile small (hasta 480px) */
+@media screen and (max-width: 480px) {
+  .speedometer-container {
+    bottom: 70px;
+    left: 8px;
+  }
+
+  .results-container {
+    width: calc(100% - 16px);
+    bottom: 8px;
+  }
+}
+
+/* Landscape mode on mobiles */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .speedometer-container {
+    bottom: 60px;
+    left: 5px;
+  }
+
+  .results-container {
+    bottom: 5px;
+  }
+}
+
+/* Extra small screens (320px) */
+@media screen and (max-width: 360px) {
+  .speedometer-container {
+    bottom: 60px;
+    left: 5px;
+  }
+
+  .results-container {
+    width: calc(100% - 8px);
+    bottom: 5px;
+  }
+}

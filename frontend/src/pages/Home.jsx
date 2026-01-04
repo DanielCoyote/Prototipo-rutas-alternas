@@ -6,6 +6,7 @@ import { getRoute } from "../services/ors";
 import { saveRouteHistory } from "../services/api";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -316,7 +317,7 @@ export default function Home() {
   }, [watchId]);
 
   return (
-    <div style={{ height: "100vh", width: "100%", position: "relative" }}>
+    <div className="home-container">
       <Sidebar 
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -333,12 +334,7 @@ export default function Home() {
       
       {/* Indicador de velocidad durante navegación - Circular */}
       {isNavigating && (
-        <div style={{
-          position: "absolute",
-          bottom: "100px",
-          left: "20px",
-          zIndex: 1001
-        }}>
+        <div className="speedometer-container">
           <svg width="120" height="120" viewBox="0 0 120 120">
             {/* Fondo del círculo */}
             <circle
@@ -408,15 +404,7 @@ export default function Home() {
       
       {/* Panel de resultados de búsqueda */}
       {routes && routes.length > 0 && (
-        <div style={{
-          position: "absolute",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1000,
-          width: "90%",
-          maxWidth: "800px"
-        }}>
+        <div className="results-container">
           <SearchResults
             routes={routes}
             selectedRouteIndex={selectedRouteIndex}

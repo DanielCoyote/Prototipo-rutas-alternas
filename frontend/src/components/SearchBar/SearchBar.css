@@ -198,3 +198,128 @@
 .suggestions-box::-webkit-scrollbar-thumb:hover {
   background: #52C7B8;
 }
+/* ============================================ */
+/* RESPONSIVE DESIGN - Media Queries */
+/* ============================================ */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+  .search-container {
+    width: 340px;
+  }
+}
+
+/* Móviles grandes y tablets pequeñas (481px - 768px) */
+@media screen and (max-width: 768px) {
+  .search-container {
+    width: calc(100% - 2rem);
+    max-width: 400px;
+    left: 1rem;
+    right: 1rem;
+    top: 1rem;
+  }
+
+  .search-header {
+    padding: 10px 14px;
+  }
+
+  .search-header h2 {
+    font-size: 16px;
+  }
+
+  .search-box {
+    padding: 12px;
+  }
+
+  .input-group input {
+    font-size: 14px;
+  }
+
+  .toggle-switch {
+    width: 50px;
+    height: 26px;
+  }
+
+  .toggle-slider {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toggle-switch.active .toggle-slider {
+    transform: translateX(24px);
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media screen and (max-width: 480px) {
+  .search-container {
+    width: calc(100% - 1rem);
+    left: 0.5rem;
+    right: 0.5rem;
+    top: 0.5rem;
+  }
+
+  .search-header {
+    padding: 8px 12px;
+  }
+
+  .search-header h2 {
+    font-size: 14px;
+  }
+
+  .menu-btn {
+    font-size: 20px;
+  }
+
+  .search-box {
+    padding: 10px;
+  }
+
+  .input-group {
+    padding: 6px 10px;
+  }
+
+  .input-group input {
+    font-size: 13px;
+  }
+
+  .icon.start,
+  .icon.end {
+    font-size: 16px;
+    margin-right: 6px;
+  }
+
+  /* Botones de ubicación más pequeños en móvil */
+  .input-group button {
+    padding: 6px 8px !important;
+    font-size: 14px !important;
+  }
+
+  .toggle-switch {
+    width: 46px;
+    height: 24px;
+  }
+
+  .toggle-slider {
+    width: 16px;
+    height: 16px;
+  }
+
+  .toggle-switch.active .toggle-slider {
+    transform: translateX(22px);
+  }
+
+  .toggle-icon {
+    font-size: 10px;
+  }
+
+  .suggestions-box {
+    max-height: 150px;
+    font-size: 13px;
+  }
+
+  .suggestions-box li {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

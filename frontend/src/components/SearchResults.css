@@ -240,12 +240,53 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* ============================================ */
+/* RESPONSIVE DESIGN - Media Queries */
+/* ============================================ */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media screen and (max-width: 1024px) {
   .search-results-container {
-    padding: 12px 16px;
+    max-width: 700px;
+    padding: 14px 18px;
   }
-  
+
+  .search-results-header h3 {
+    font-size: 17px;
+  }
+
+  .route-card {
+    padding: 11px 14px;
+  }
+}
+
+/* Móviles grandes y tablets pequeñas (481px - 768px) */
+@media screen and (max-width: 768px) {
+  .search-results-container {
+    max-width: calc(100% - 2rem);
+    padding: 12px 16px;
+    border-radius: 10px;
+  }
+
+  .search-results-container.navigating {
+    padding: 12px 16px;
+    max-height: 140px;
+  }
+
+  .search-results-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .search-results-header h3 {
+    font-size: 16px;
+  }
+
+  .results-count {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+
   .route-card {
     padding: 10px 12px;
     flex-direction: column;
@@ -259,13 +300,145 @@
   
   .route-card-info {
     gap: 16px;
-  }
-  
-  .search-results-header h3 {
-    font-size: 16px;
+    flex-wrap: wrap;
   }
   
   .route-label {
     min-width: auto;
+    font-size: 13px;
+  }
+
+  .route-info-item {
+    font-size: 12px;
+  }
+
+  .route-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .nav-control-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .nav-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .nav-stat-card {
+    padding: 10px;
+  }
+
+  .nav-stat-value {
+    font-size: 22px;
+  }
+
+  .nav-stat-label {
+    font-size: 11px;
+  }
+}
+
+/* Móviles pequeños (hasta 480px) */
+@media screen and (max-width: 480px) {
+  .search-results-container {
+    max-width: calc(100% - 1rem);
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .search-results-container.navigating {
+    padding: 10px 12px;
+    max-height: 120px;
+  }
+
+  .search-results-header {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+
+  .search-results-header h3 {
+    font-size: 14px;
+  }
+
+  .results-count {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .route-card {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .route-number {
+    gap: 6px;
+  }
+
+  .route-label {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .route-info-item {
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .route-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .selected-badge {
+    font-size: 11px;
+  }
+
+  .nav-control-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 44px;
+  }
+
+  .nav-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .nav-stat-card {
+    padding: 8px;
+  }
+
+  .nav-stat-value {
+    font-size: 20px;
+  }
+
+  .nav-stat-label {
+    font-size: 10px;
+  }
+
+  .nav-info-value {
+    font-size: 16px;
+  }
+}
+
+/* Modo landscape en móviles */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .search-results-container {
+    max-height: 200px;
+    padding: 8px 12px;
+  }
+
+  .search-results-container.navigating {
+    max-height: 100px;
+  }
+
+  .route-card {
+    padding: 6px 10px;
+  }
+
+  .search-results-header {
+    margin-bottom: 6px;
   }
 }
