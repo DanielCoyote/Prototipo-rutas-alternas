@@ -115,14 +115,15 @@ export default function MapView({
   isNavigating = false,
   currentPosition = null,
   currentHeading = 0,
-  currentSpeed = 0
+  currentSpeed = 0,
+  favoriteToZoom = null,
+  shouldZoomToFavorite = false,
+  onZoomComplete = null
 }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [favoriteLabel, setFavoriteLabel] = useState("");
   const [clickedLocation, setClickedLocation] = useState(null);
   const [favoritesKey, setFavoritesKey] = useState(0);
-  const [zoomToCoords, setZoomToCoords] = useState(null);
-  const [shouldZoom, setShouldZoom] = useState(false);
   const [mapStyle, setMapStyle] = useState({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: '&copy; OpenStreetMap contributors'
@@ -153,18 +154,9 @@ export default function MapView({
   };
 
   const handleFavoriteClick = (coords, label) => {
-    // Hacer zoom al favorito
-    setZoomToCoords(coords);
-    setShouldZoom(true);
-    
-    // Establecer como destino
     if (onDestinationChange) {
       onDestinationChange(coords, label);
     }
-  };
-
-  const handleZoomComplete = () => {
-    setShouldZoom(false);
   };
 
   const handleStyleChange = (styleKey, styleData) => {
@@ -248,9 +240,9 @@ export default function MapView({
         <PolygonsLayer styleOptions={{ fillColor: undefined }} />
         <FavoriteMarkers key={favoritesKey} onFavoriteClick={handleFavoriteClick} />
         <ZoomToFavorite 
-          coords={zoomToCoords} 
-          shouldZoom={shouldZoom} 
-          onZoomComplete={handleZoomComplete}
+          coords={favoriteToZoom} 
+          shouldZoom={shouldZoomToFavorite} 
+          onZoomComplete={onZoomComplete}
         />
 
         <MapClickHandler onClick={handleMapClick} />

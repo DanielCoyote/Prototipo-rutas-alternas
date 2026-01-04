@@ -29,6 +29,10 @@ export default function Home() {
   const [watchId, setWatchId] = useState(null);
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Estados para zoom a favorito
+  const [favoriteToZoom, setFavoriteToZoom] = useState(null);
+  const [shouldZoomToFavorite, setShouldZoomToFavorite] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -131,6 +135,16 @@ export default function Home() {
       label: label || `${coords[0].toFixed(5)}, ${coords[1].toFixed(5)}`,
       coords: [coords[1], coords[0]] // Convert [lat, lon] -> [lon, lat]
     });
+  };
+
+  // Manejar selección de favorito desde Sidebar con zoom automático
+  const handleFavoriteSelect = (coords, label) => {
+    // Activar zoom al favorito
+    setFavoriteToZoom(coords);
+    setShouldZoomToFavorite(true);
+    
+    // También establecer como destino
+    handleDestinationChange(coords, label);
   };
 
   // Handle route selection (from SearchResults, MapView markers, or route lines)
@@ -323,6 +337,7 @@ export default function Home() {
         onClose={() => setSidebarOpen(false)}
         onLogout={handleLogout}
         onRouteFromHistory={handleRouteFromHistory}
+        onFavoriteSelect={handleFavoriteSelect}
       />
       <SearchBar 
         onSearch={handleSearch} 
@@ -428,6 +443,9 @@ export default function Home() {
         currentPosition={currentPosition}
         currentHeading={currentHeading}
         currentSpeed={currentSpeed}
+        favoriteToZoom={favoriteToZoom}
+        shouldZoomToFavorite={shouldZoomToFavorite}
+        onZoomComplete={() => setShouldZoomToFavorite(false)}
       />
     </div>
   );

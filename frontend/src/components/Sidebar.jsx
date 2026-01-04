@@ -4,7 +4,7 @@ import RouteHistory from "./RouteHistory";
 import FavoritesList from "./FavoritesList";
 import "../styles/sidebar.css";
 
-export default function Sidebar({ isOpen, onClose, onLogout, onRouteFromHistory }) {
+export default function Sidebar({ isOpen, onClose, onLogout, onRouteFromHistory, onFavoriteSelect }) {
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState("main"); // "main" | "history" | "favorites"
 
@@ -15,6 +15,13 @@ export default function Sidebar({ isOpen, onClose, onLogout, onRouteFromHistory 
   const handleRouteSelect = (routeData) => {
     if (onRouteFromHistory) {
       onRouteFromHistory(routeData.origin, routeData.destination);
+    }
+    onClose();
+  };
+
+  const handleFavoriteSelect = (coords, label) => {
+    if (onFavoriteSelect) {
+      onFavoriteSelect(coords, label);
     }
     onClose();
   };
@@ -112,7 +119,10 @@ export default function Sidebar({ isOpen, onClose, onLogout, onRouteFromHistory 
                 <h3 className="sidebar-view-title">Lugares Favoritos</h3>
               </div>
               <div className="sidebar-view-content">
-                <FavoritesList onClose={onClose} />
+                <FavoritesList 
+                  onClose={onClose}
+                  onFavoriteSelect={handleFavoriteSelect}
+                />
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getFavorites, deleteFavorite } from "../services/api";
 
-export default function FavoritesList({ onClose }) {
+export default function FavoritesList({ onClose, onFavoriteSelect }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +52,12 @@ export default function FavoritesList({ onClose }) {
         <div 
           key={favorite.id}
           className="route-history-item"
+          onClick={() => {
+            if (onFavoriteSelect) {
+              onFavoriteSelect([favorite.latitude, favorite.longitude], favorite.label);
+            }
+          }}
+          style={{ cursor: "pointer" }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -76,7 +82,10 @@ export default function FavoritesList({ onClose }) {
               </div>
             </div>
             <button
-              onClick={() => handleDelete(favorite.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // Evitar que se active el click del favorito
+                handleDelete(favorite.id);
+              }}
               className="route-history-delete-btn"
               title="Eliminar"
             >
