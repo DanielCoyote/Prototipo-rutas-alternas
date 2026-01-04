@@ -87,6 +87,23 @@ function NavigationController({ isNavigating, currentPosition, currentHeading, c
   return null;
 }
 
+// Componente para hacer zoom a favorito
+function ZoomToFavorite({ coords, shouldZoom, onZoomComplete }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (shouldZoom && coords) {
+      map.setView(coords, 16, { animate: true, duration: 1 });
+      // Notificar que el zoom se completó
+      setTimeout(() => {
+        if (onZoomComplete) onZoomComplete();
+      }, 1000);
+    }
+  }, [shouldZoom, coords, map, onZoomComplete]);
+
+  return null;
+}
+
 export default function MapView({ 
   origin, 
   destination, 
@@ -104,6 +121,8 @@ export default function MapView({
   const [favoriteLabel, setFavoriteLabel] = useState("");
   const [clickedLocation, setClickedLocation] = useState(null);
   const [favoritesKey, setFavoritesKey] = useState(0);
+  const [zoomToCoords, setZoomToCoords] = useState(null);
+  const [shouldZoom, setShouldZoom] = useState(false);
   const [mapStyle, setMapStyle] = useState({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: '&copy; OpenStreetMap contributors'
@@ -134,9 +153,18 @@ export default function MapView({
   };
 
   const handleFavoriteClick = (coords, label) => {
+    // Hacer zoom al favorito
+    setZoomToCoords(coords);
+    setShouldZoom(true);
+    
+    // Establecer como destino
     if (onDestinationChange) {
       onDestinationChange(coords, label);
     }
+  };
+
+  const handleZoomComplete = () => {
+    setShouldZoom(false);
   };
 
   const handleStyleChange = (styleKey, styleData) => {
@@ -219,6 +247,11 @@ export default function MapView({
 
         <PolygonsLayer styleOptions={{ fillColor: undefined }} />
         <FavoriteMarkers key={favoritesKey} onFavoriteClick={handleFavoriteClick} />
+        <ZoomToFavorite 
+          coords={zoomToCoords} 
+          shouldZoom={shouldZoom} 
+          onZoomComplete={handleZoomComplete}
+        />
 
         <MapClickHandler onClick={handleMapClick} />
         <NavigationController 
