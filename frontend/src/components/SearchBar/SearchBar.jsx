@@ -36,7 +36,23 @@ export default function SearchBar({ onSearch, externalDestination, onMenuToggle,
         },
         (error) => {
           console.error("Error obteniendo ubicación:", error);
-          alert("No se pudo obtener tu ubicación. Verifica los permisos del navegador.");
+          let errorMessage = "No se pudo obtener tu ubicación.";
+          
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = "Permiso de ubicación denegado.\n\nPor favor:\n1. Haz clic en el ícono de candado/info en la barra de direcciones\n2. Permite el acceso a la ubicación\n3. Recarga la página";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = "Ubicación no disponible. Verifica que el servicio de ubicación esté habilitado en tu dispositivo.";
+              break;
+            case error.TIMEOUT:
+              errorMessage = "Tiempo de espera agotado. Intenta nuevamente.";
+              break;
+            default:
+              errorMessage = "Error desconocido al obtener ubicación. Código: " + error.code;
+          }
+          
+          alert(errorMessage);
         },
         {
           enableHighAccuracy: true,

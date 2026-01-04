@@ -61,7 +61,7 @@ const SearchResults = ({ routes, selectedRouteIndex, onSelectRoute, isNavigating
                       <circle cx="12" cy="12" r="10"/>
                       <path d="M12 16v-4M12 8h.01"/>
                     </svg>
-                    <span className="route-label">Ruta / Dirección {index + 1}</span>
+                    <span className="route-label">Ruta {index + 1}</span>
                   </div>
                   
                   <div className="route-card-info">

@@ -57,7 +57,23 @@ export default function LocationButton() {
               },
               (error) => {
                 console.error("Error obteniendo ubicación:", error);
-                alert("No se pudo obtener tu ubicación. Verifica los permisos del navegador.");
+                let errorMessage = "No se pudo obtener tu ubicación.";
+                
+                switch(error.code) {
+                  case error.PERMISSION_DENIED:
+                    errorMessage = "Permiso denegado.\n\nPara habilitar:\n1. Clic en el candado de la barra de direcciones\n2. Permite 'Ubicación'\n3. Recarga la página (F5)";
+                    break;
+                  case error.POSITION_UNAVAILABLE:
+                    errorMessage = "Ubicación no disponible.\nVerifica que el servicio de ubicación esté activo.";
+                    break;
+                  case error.TIMEOUT:
+                    errorMessage = "Tiempo agotado. Intenta nuevamente.";
+                    break;
+                  default:
+                    errorMessage = "Error desconocido (código: " + error.code + ")";
+                }
+                
+                alert(errorMessage);
                 btn.innerHTML = '📍';
                 btn.disabled = false;
               },
