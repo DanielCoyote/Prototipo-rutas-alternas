@@ -3,7 +3,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import "../styles/map-controls.css";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, ZoomControl } from "react-leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from "@mui/material";
 import PolygonsLayer from "./PolygonsLayer";
 import FavoriteMarkers from "./FavoriteMarkers";
@@ -11,11 +11,15 @@ import LocationButton from "./LocationButton";
 import MapStyleSelector from "./MapStyleSelector";
 import RouteTimeMarker from "./RouteTimeMarker";
 import { createFavorite } from "../services/api";
+import L from "leaflet";
 
-function FitBounds({ routes, selectedRouteIndex, origin, destination }) {
+function FitBounds({ routes, selectedRouteIndex, origin, destination, isNavigating }) {
   const map = useMap();
 
   useEffect(() => {
+    // No ajustar bounds si estamos navegando
+    if (isNavigating) return;
+    
     const pts = [];
     
     // Si hay rutas, usar la ruta seleccionada o la primera
@@ -33,7 +37,7 @@ function FitBounds({ routes, selectedRouteIndex, origin, destination }) {
 
     const bounds = pts.map(p => [p[0], p[1]]);
     map.fitBounds(bounds, { padding: [50, 50] });
-  }, [map, routes, selectedRouteIndex, origin, destination]);
+  }, [map, routes, selectedRouteIndex, origin, destination, isNavigating]);
 
   return null;
 }
@@ -52,6 +56,37 @@ function MapClickHandler({ onClick }) {
   return null;
 }
 
+// Component to control map during navigation
+function NavigationController({ isNavigating, currentPosition, currentHeading, currentSpeed }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!isNavigating || !currentPosition) return;
+
+    // Centrar mapa en posición actual
+    map.setView(currentPosition, map.getZoom(), { animate: true, duration: 0.5 });
+
+    // Ajustar zoom según velocidad
+    let targetZoom = 15; // zoom por defecto
+    if (currentSpeed > 80) {
+      targetZoom = 13; // Más alejado para alta velocidad
+    } else if (currentSpeed > 50) {
+      targetZoom = 14;
+    } else if (currentSpeed > 20) {
+      targetZoom = 15;
+    } else {
+      targetZoom = 16; // Más cerca para baja velocidad
+    }
+
+    if (Math.abs(map.getZoom() - targetZoom) > 0.5) {
+      map.setZoom(targetZoom, { animate: true });
+    }
+
+  }, [map, isNavigating, currentPosition, currentSpeed]);
+
+  return null;
+}
+
 export default function MapView({ 
   origin, 
   destination, 
@@ -59,7 +94,11 @@ export default function MapView({
   selectedRouteIndex = 0,
   onDestinationChange,
   onRouteSelect,
-  isLoading = false
+  isLoading = false,
+  isNavigating = false,
+  currentPosition = null,
+  currentHeading = 0,
+  currentSpeed = 0
 }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [favoriteLabel, setFavoriteLabel] = useState("");
@@ -182,6 +221,12 @@ export default function MapView({
         <FavoriteMarkers key={favoritesKey} onFavoriteClick={handleFavoriteClick} />
 
         <MapClickHandler onClick={handleMapClick} />
+        <NavigationController 
+          isNavigating={isNavigating}
+          currentPosition={currentPosition}
+          currentHeading={currentHeading}
+          currentSpeed={currentSpeed}
+        />
 
         {origin && (
           <Marker position={origin}>
@@ -193,6 +238,34 @@ export default function MapView({
           <Marker position={destination}>
             <Popup>Destino</Popup>
           </Marker>
+        )}
+
+        {/* Marcador de posición actual durante navegación */}
+        {isNavigating && currentPosition && (
+          <Marker 
+            position={currentPosition}
+            icon={L.divIcon({
+              className: 'custom-arrow-marker',
+              html: `
+                <div style="
+                  transform: rotate(${currentHeading}deg);
+                  width: 40px;
+                  height: 40px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                  <svg width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="#3B82F6" opacity="0.3" />
+                    <circle cx="20" cy="20" r="12" fill="#3B82F6" stroke="white" stroke-width="3" />
+                    <path d="M 20 8 L 26 20 L 20 17 L 14 20 Z" fill="white" />
+                  </svg>
+                </div>
+              `,
+              iconSize: [40, 40],
+              iconAnchor: [20, 20]
+            })}
+          />
         )}
 
         {/* Renderizar todas las rutas */}
@@ -249,7 +322,13 @@ export default function MapView({
           );
         })}
 
-        <FitBounds routes={routes} selectedRouteIndex={selectedRouteIndex} origin={origin} destination={destination} />
+        <FitBounds 
+          routes={routes} 
+          selectedRouteIndex={selectedRouteIndex} 
+          origin={origin} 
+          destination={destination} 
+          isNavigating={isNavigating}
+        />
       </MapContainer>
 
       {/* Dialog for adding favorite */}

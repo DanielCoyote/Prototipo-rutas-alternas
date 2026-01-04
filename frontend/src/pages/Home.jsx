@@ -316,6 +316,39 @@ export default function Home() {
         setAvoidZones={setAvoidZones}
       />
       
+      {/* Indicador de velocidad durante navegación */}
+      {isNavigating && (
+        <div style={{
+          position: "absolute",
+          top: "80px",
+          right: "20px",
+          zIndex: 1001,
+          backgroundColor: "white",
+          padding: "12px 16px",
+          borderRadius: "12px",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+          border: "2px solid #3B82F6",
+          minWidth: "100px",
+          textAlign: "center"
+        }}>
+          <div style={{
+            fontSize: "32px",
+            fontWeight: "bold",
+            color: "#3B82F6",
+            lineHeight: "1"
+          }}>
+            {Math.round(currentSpeed)}
+          </div>
+          <div style={{
+            fontSize: "14px",
+            color: "#666",
+            marginTop: "4px"
+          }}>
+            km/h
+          </div>
+        </div>
+      )}
+      
       {/* Panel de resultados de búsqueda */}
       {routes && routes.length > 0 && (
         <div style={{
@@ -331,6 +364,9 @@ export default function Home() {
             routes={routes}
             selectedRouteIndex={selectedRouteIndex}
             onSelectRoute={handleRouteSelect}
+            isNavigating={isNavigating}
+            onStartNavigation={startNavigation}
+            onStopNavigation={stopNavigation}
           />
         </div>
       )}
@@ -343,6 +379,10 @@ export default function Home() {
         onDestinationChange={handleDestinationChange}
         onRouteSelect={handleRouteSelect}
         isLoading={loading}
+        isNavigating={isNavigating}
+        currentPosition={currentPosition}
+        currentHeading={currentHeading}
+        currentSpeed={currentSpeed}
       />
     </div>
   );
